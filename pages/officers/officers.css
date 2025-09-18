@@ -1,0 +1,230 @@
+/* Officers page specific styles */
+
+.page-officers__tabs {
+  margin-bottom: var(--space-xl);
+}
+
+.page-officers__tab-list {
+  display: flex;
+  gap: var(--space-md);
+  border-bottom: 1px solid var(--border-light);
+  margin-bottom: var(--space-lg);
+}
+
+.page-officers__tab-button {
+  padding: var(--space-md) var(--space-lg);
+  background: none;
+  border: none;
+  color: var(--text-muted);
+  cursor: pointer;
+  border-bottom: 2px solid transparent;
+  text-transform: uppercase;
+  font-weight: 600;
+  font-size: var(--font-size-sm);
+  transition: all var(--trans);
+}
+
+.page-officers__tab-button:hover {
+  color: var(--text-primary);
+  background: var(--bg-secondary);
+}
+
+.page-officers__tab-button.active {
+  color: var(--moss-600);
+  border-bottom-color: var(--moss-600);
+  background: var(--panel-accent);
+}
+
+.page-officers__header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: var(--space-lg);
+}
+
+.page-officers__title {
+  font-size: var(--font-size-xl);
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.page-officers__add-btn {
+  white-space: nowrap;
+}
+
+.page-officers__table-actions {
+  margin-top: var(--space-lg);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: var(--space-md);
+}
+
+.page-officers__count {
+  color: var(--text-muted);
+  font-size: var(--font-size-sm);
+}
+
+.page-officers__action-buttons {
+  display: flex;
+  gap: var(--space-xs);
+}
+
+.page-officers__action-btn {
+  padding: var(--space-xs) var(--space-sm);
+  font-size: var(--font-size-xs);
+  border-radius: var(--radius-sm);
+}
+
+.page-officers__status-cell {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.page-officers__empty {
+  text-align: center;
+  padding: var(--space-3xl);
+  color: var(--text-muted);
+}
+
+.page-officers__empty-icon {
+  width: 64px;
+  height: 64px;
+  margin: 0 auto var(--space-lg);
+  opacity: 0.5;
+}
+
+/* Modal styles for officer details */
+.page-officers__modal-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--space-lg);
+}
+
+.page-officers__modal-field {
+  margin-bottom: var(--space-md);
+}
+
+.page-officers__modal-label {
+  font-weight: 600;
+  color: var(--text-primary);
+  margin-bottom: var(--space-xs);
+}
+
+.page-officers__modal-value {
+  color: var(--text-secondary);
+}
+
+.page-officers__modal-description {
+  grid-column: 1 / -1;
+}
+
+/* Officer card layout for mobile */
+.page-officers__card {
+  background: var(--white);
+  border: 1px solid var(--border-light);
+  border-radius: var(--radius);
+  padding: var(--space-lg);
+  margin-bottom: var(--space-md);
+  display: none;
+  box-shadow: var(--glass-shadow);
+}
+
+.page-officers__card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: var(--space-md);
+}
+
+.page-officers__card-name {
+  font-size: var(--font-size-lg);
+  font-weight: 600;
+  color: var(--text-primary);
+  margin-bottom: var(--space-xs);
+}
+
+.page-officers__card-circle {
+  color: var(--text-muted);
+  font-size: var(--font-size-sm);
+}
+
+.page-officers__card-info {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--space-md);
+  margin-bottom: var(--space-lg);
+}
+
+.page-officers__card-field {
+  font-size: var(--font-size-sm);
+}
+
+.page-officers__card-label {
+  color: var(--text-muted);
+  margin-bottom: var(--space-xs);
+}
+
+.page-officers__card-value {
+  color: var(--text-primary);
+  font-weight: 500;
+}
+
+.page-officers__card-actions {
+  display: flex;
+  gap: var(--space-sm);
+  justify-content: flex-end;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .page-officers__tab-list {
+    flex-wrap: wrap;
+    gap: var(--space-sm);
+  }
+  
+  .page-officers__tab-button {
+    padding: var(--space-sm) var(--space-md);
+    font-size: var(--font-size-xs);
+  }
+  
+  .page-officers__header {
+    flex-direction: column;
+    align-items: stretch;
+    gap: var(--space-md);
+  }
+  
+  .page-officers__table-actions {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  
+  .page-officers__modal-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .page-officers__action-buttons {
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+  
+  /* Show cards instead of table on mobile */
+  .table-container {
+    display: none;
+  }
+  
+  .page-officers__card {
+    display: block;
+  }
+}
+
+/* Loading state */
+.page-officers__loading {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 200px;
+  color: var(--text-muted);
+}

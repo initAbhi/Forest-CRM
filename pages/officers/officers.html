@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en" class="page-officers">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Officers - Hello Forest CRM</title>
+    <link rel="stylesheet" href="../../css/variables.css">
+    <link rel="stylesheet" href="../../css/common.css">
+    <link rel="stylesheet" href="../../css/effects.css">
+    <link rel="stylesheet" href="./officers.css">
+</head>
+<body>
+    <div id="app">
+        <!-- Global notice banner -->
+        <div class="global-notice">
+            <span>Demo UI. No backend.</span>
+        </div>
+
+        <!-- Sidebar -->
+        <nav class="sidebar" id="sidebar" aria-label="Primary">
+            <div class="sidebar-header">
+                <div class="logo">
+                    <svg width="32" height="32" viewBox="0 0 32 32" fill="none">
+                        <path d="M16 2L22 8L16 14L10 8L16 2Z" fill="var(--sun-400)"/>
+                        <path d="M8 12L14 18L8 24L2 18L8 12Z" fill="var(--moss-500)"/>
+                        <path d="M24 12L30 18L24 24L18 18L24 12Z" fill="var(--moss-500)"/>
+                        <path d="M16 18L22 24L16 30L10 24L16 18Z" fill="var(--leaf-300)"/>
+                    </svg>
+                    <span class="logo-text">Hello Forest</span>
+                </div>
+            </div>
+
+            <ul class="sidebar-nav" role="navigation">
+                <li class="nav-section">
+                    <span class="section-title">Main</span>
+                </li>
+                <li>
+                    <a href="../dashboard/dashboard.html" class="nav-link">
+                        <svg width="20" height="20" viewBox="0 0 20 20" fill="currentColor">
+                            <path d="M10 2L3 7V18H8V13H12V18H17V7L10 2Z"/>
+                        </svg>
+                        <span>Dashboard</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="../cases/cases.html" class="nav-link">
+                        <svg width="20" height="20" viewBox="0 0 20 20" fill="currentColor">
+                            <path d="M4 4H16C17.1 4 18 4.9 18 6V16C18 17.1 17.1 18 16 18H4C2.9 18 2 17.1 2 16V6C2 4.9 2.9 4 4 4ZM4 8V16H16V8H4Z"/>
+                        </svg>
+                        <span>Cases</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="../knowledgebase/knowledgebase.html" class="nav-link">
+                        <svg width="20" height="20" viewBox="0 0 20 20" fill="currentColor">
+                            <path d="M4 2H16C17.1 2 18 2.9 18 4V16C18 17.1 17.1 18 16 18H4C2.9 18 2 17.1 2 16V4C2 2.9 2.9 2 4 2ZM4 6V8H16V6H4ZM4 10V12H14V10H4ZM4 14V16H12V14H4Z"/>
+                        </svg>
+                        <span>Knowledgebase</span>
+                    </a>
+                </li>
+
+                <li class="nav-section">
+                    <span class="section-title">Data Master</span>
+                </li>
+                <li class="nav-submenu">
+                    <div class="nav-link submenu-toggle active">
+                        <svg width="20" height="20" viewBox="0 0 20 20" fill="currentColor">
+                            <path d="M10 2C14.42 2 18 5.58 18 10C18 14.42 14.42 18 10 18C5.58 18 2 14.42 2 10C2 5.58 5.58 2 10 2ZM10 5C8.34 5 7 6.34 7 8C7 9.66 8.34 11 10 11C11.66 11 13 9.66 13 8C13 6.34 11.66 5 10 5ZM10 13C7.33 13 2 14.33 2 17V18H18V17C18 14.33 12.67 13 10 13Z"/>
+                        </svg>
+                        <span>Officers</span>
+                        <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor" class="submenu-arrow">
+                            <path d="M4 6L8 10L12 6H4Z"/>
+                        </svg>
+                    </div>
+                    <ul class="submenu" style="display: block;">
+                        <li><a href="../officers/officers.html?tab=ccf" class="nav-link" id="nav-ccf">CCF</a></li>
+                        <li><a href="../officers/officers.html?tab=dcf" class="nav-link" id="nav-dcf">DCF</a></li>
+                        <li><a href="../officers/officers.html?tab=acf" class="nav-link" id="nav-acf">ACF</a></li>
+                        <li><a href="../officers/officers.html?tab=rfo" class="nav-link" id="nav-rfo">RFO</a></li>
+                    </ul>
+                </li>
+
+                <li class="nav-section">
+                    <span class="section-title">Tools</span>
+                </li>
+                <li>
+                    <a href="../upload/upload.html" class="nav-link">
+                        <svg width="20" height="20" viewBox="0 0 20 20" fill="currentColor">
+                            <path d="M10 2L14 6H12V12H8V6H6L10 2ZM4 14H16V16H4V14Z"/>
+                        </svg>
+                        <span>Upload Data</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="../login/login.html" class="nav-link logout-link">
+                        <svg width="20" height="20" viewBox="0 0 20 20" fill="currentColor">
+                            <path d="M3 3H11C12.1 3 13 3.9 13 5V7H11V5H3V15H11V13H13V15C13 16.1 12.1 17 11 17H3C1.9 17 1 16.1 1 15V5C1 3.9 1.9 3 3 3ZM18 10L14 6V9H8V11H14V14L18 10Z"/>
+                        </svg>
+                        <span>Logout</span>
+                    </a>
+                </li>
+            </ul>
+        </nav>
+
+        <!-- Main content area -->
+        <main class="main-content">
+            <!-- Topbar -->
+            <header class="topbar">
+                <div class="topbar-left">
+                    <h1 class="page-title" id="page-title">Officers</h1>
+                </div>
+                <div class="topbar-center">
+                    <div class="search-container">
+                        <svg width="20" height="20" viewBox="0 0 20 20" fill="currentColor" class="search-icon">
+                            <path d="M12.9 14.32C11.72 15.35 10.18 16 8.5 16C4.36 16 1 12.64 1 8.5S4.36 1 8.5 1S16 4.36 16 8.5C16 10.18 15.35 11.72 14.32 12.9L19 17.58L17.58 19L12.9 14.32ZM8.5 14C11.54 14 14 11.54 14 8.5S11.54 3 8.5 3S3 5.46 3 8.5S5.46 14 8.5 14Z"/>
+                        </svg>
+                        <input type="search" placeholder="Search..." class="search-input" disabled>
+                    </div>
+                </div>
+                <div class="topbar-right">
+                    <button class="theme-toggle" disabled>
+                        <svg width="20" height="20" viewBox="0 0 20 20" fill="currentColor">
+                            <path d="M10 2C14.42 2 18 5.58 18 10C18 14.42 14.42 18 10 18C5.58 18 2 14.42 2 10C2 5.58 5.58 2 10 2ZM10 4C8.34 4 6.8 4.84 5.82 6.16C5.3 6.84 5 7.68 5 8.58C5 10.32 6.04 11.82 7.5 12.5C8.96 13.18 10.68 13.18 12.14 12.5C13.6 11.82 14.64 10.32 14.64 8.58C14.64 7.68 14.34 6.84 13.82 6.16C12.84 4.84 11.3 4 10 4Z"/>
+                        </svg>
+                    </button>
+                    <div class="user-menu">
+                        <button class="user-avatar">
+                            <svg width="20" height="20" viewBox="0 0 20 20" fill="currentColor">
+                                <path d="M10 2C14.42 2 18 5.58 18 10C18 14.42 14.42 18 10 18C5.58 18 2 14.42 2 10C2 5.58 5.58 2 10 2ZM10 5C8.34 5 7 6.34 7 8C7 9.66 8.34 11 10 11C11.66 11 13 9.66 13 8C13 6.34 11.66 5 10 5ZM10 13C7.33 13 2 14.33 2 17V18H18V17C18 14.33 12.67 13 10 13Z"/>
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+            </header>
+
+            <!-- Page content -->
+            <div class="page-content" id="page-content">
+                <!-- Officers content will be loaded here -->
+            </div>
+        </main>
+
+        <!-- Background effects -->
+        <div class="bg-effects">
+            <div class="sunbeams"></div>
+            <div class="noise-overlay"></div>
+        </div>
+    </div>
+
+    <script src="../../js/demo-data.js" defer></script>
+    <script src="../../js/utils/format.js" type="module" defer></script>
+    <script src="./officers.js" defer></script>
+</body>
+</html>

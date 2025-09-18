@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en" class="page-login">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - Hello Forest CRM</title>
+    <link rel="stylesheet" href="../../css/variables.css">
+    <link rel="stylesheet" href="../../css/common.css">
+    <link rel="stylesheet" href="../../css/effects.css">
+    <link rel="stylesheet" href="./login.css">
+</head>
+<body>
+    <div class="login-container">
+        <div class="login-card glass">
+            <div class="logo mb-lg">
+                <svg width="48" height="48" viewBox="0 0 32 32" fill="none">
+                    <path d="M16 2L22 8L16 14L10 8L16 2Z" fill="var(--sun-400)"/>
+                    <path d="M8 12L14 18L8 24L2 18L8 12Z" fill="var(--moss-500)"/>
+                    <path d="M24 12L30 18L24 24L18 18L24 12Z" fill="var(--moss-500)"/>
+                    <path d="M16 18L22 24L16 30L10 24L16 18Z" fill="var(--leaf-300)"/>
+                </svg>
+                <h1>Hello Forest</h1>
+                <p>Forest Resource Management System</p>
+            </div>
+            
+            <form id="login-form" class="login-form">
+                <div class="form-group">
+                    <label for="username" class="form-label">Username</label>
+                    <input type="text" id="username" name="username" class="form-input" required placeholder="Enter your username">
+                </div>
+                
+                <div class="form-group">
+                    <label for="password" class="form-label">Password</label>
+                    <div class="password-field">
+                        <input type="password" id="password" name="password" class="form-input" required placeholder="Enter your password">
+                        <button type="button" id="toggle-password" class="password-toggle">
+                            <svg width="20" height="20" viewBox="0 0 20 20" fill="currentColor">
+                                <path d="M10 3C5 3 1.73 7.11 1 10C1.73 12.89 5 17 10 17S18.27 12.89 19 10C18.27 7.11 15 3 10 3ZM10 15C7.24 15 5 12.76 5 10S7.24 5 10 5S15 7.24 15 10S12.76 15 10 15ZM10 7C8.34 7 7 8.34 7 10S8.34 13 10 13S13 11.66 13 10S11.66 7 10 7Z"/>
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+                
+                <button type="submit" class="btn btn-primary btn-lg login-btn">
+                    Log In
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Background effects -->
+    <div class="bg-effects">
+        <div class="sunbeams"></div>
+        <div class="noise-overlay"></div>
+    </div>
+
+    <script src="./login.js" defer></script>
+</body>
+</html>
