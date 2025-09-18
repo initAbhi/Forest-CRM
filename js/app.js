@@ -961,6 +961,26 @@ class HelloForestApp {
     this.showToast(`Preview showing ${Math.min(rows.length, 50)} of ${lines.length - 1} rows`, 'info');
   }
 
+  // Bulk operations
+  bulkCloseCases(caseIds) {
+    caseIds.forEach(id => {
+      const caseItem = this.currentData.cases.find(c => c.id === id);
+      if (caseItem) {
+        caseItem.status = 'Closed';
+      }
+    });
+    
+    this.filterCases();
+    this.showToast(`${caseIds.length} cases closed successfully`, 'success');
+    
+    // Uncheck all checkboxes
+    document.querySelectorAll('#cases-tbody input[type="checkbox"]').forEach(cb => {
+      cb.checked = false;
+    });
+    document.getElementById('select-all').checked = false;
+    this.updateBulkActions();
+  }
+
   // Focus trap functionality
   setupFocusTrap(container) {
     const focusableElements = container.querySelectorAll(this.focusableSelectors);
