@@ -11,6 +11,10 @@ class HelloForestApp {
       knowledgebase: [...knowledgebase],
       officers: { ...officers }
     };
+    this.filteredCases = [...cases];
+    this.currentSort = { field: null, direction: 'asc' };
+    this.currentPage = 1;
+    this.pageSize = 10;
     this.init();
   }
 
@@ -61,6 +65,10 @@ class HelloForestApp {
   setupComponents() {
     // Initialize toast system
     this.toastContainer = document.getElementById('toast-container');
+    
+    // Initialize focus trap for modals and drawers
+    this.focusableSelectors = 'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])';
+    this.lastFocusedElement = null;
   }
 
   renderLogin() {
@@ -193,19 +201,19 @@ class HelloForestApp {
   renderCases() {
     const content = `
       <div class="cases-page">
-        <div style="display: flex; justify-content: between; align-items: center; margin-bottom: var(--space-xl);">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: var(--space-xl);">
           <div class="filters" style="display: flex; gap: var(--space-md); flex-wrap: wrap; flex: 1;">
-            <input type="text" placeholder="Case No" class="form-input" style="width: 120px;">
-            <input type="text" placeholder="Name" class="form-input" style="width: 150px;">
-            <input type="text" placeholder="Phone" class="form-input" style="width: 130px;">
-            <select class="form-select" style="width: 150px;">
+            <input type="text" placeholder="Case No" class="form-input case-filter" data-field="caseNo" style="width: 120px;">
+            <input type="text" placeholder="Name" class="form-input case-filter" data-field="name" style="width: 150px;">
+            <input type="text" placeholder="Phone" class="form-input case-filter" data-field="phone" style="width: 130px;">
+            <select class="form-select case-filter" data-field="category" style="width: 150px;">
               <option value="">All Categories</option>
               <option value="Wildlife Protection">Wildlife Protection</option>
               <option value="Fire Prevention">Fire Prevention</option>
               <option value="Environmental Impact">Environmental Impact</option>
               <option value="Resource Management">Resource Management</option>
             </select>
-            <button class="btn btn-secondary">Reset</button>
+            <button class="btn btn-secondary" id="reset-filters">Reset</button>
           </div>
           <button class="btn btn-primary" id="create-case-btn">
             <svg width="20" height="20" viewBox="0 0 20 20" fill="currentColor">
@@ -216,53 +224,38 @@ class HelloForestApp {
         </div>
 
         <div class="table-container">
-          <table class="table">
+          <table class="table sortable-table" id="cases-table">
             <thead>
               <tr>
-                <th><input type="checkbox" id="select-all"></th>
-                <th>Case No</th>
-                <th>Name</th>
-                <th>Phone</th>
-                <th>Category</th>
-                <th>Status</th>
-                <th>Priority</th>
-                <th>Created</th>
+                <th><input type="checkbox" id="select-all" aria-label="Select all cases"></th>
+                <th class="sortable" data-sort="caseNo">Case No <span class="sort-indicator"></span></th>
+                <th class="sortable" data-sort="name">Name <span class="sort-indicator"></span></th>
+                <th class="sortable" data-sort="phone">Phone <span class="sort-indicator"></span></th>
+                <th class="sortable" data-sort="category">Category <span class="sort-indicator"></span></th>
+                <th class="sortable" data-sort="status">Status <span class="sort-indicator"></span></th>
+                <th class="sortable" data-sort="priority">Priority <span class="sort-indicator"></span></th>
+                <th class="sortable" data-sort="createdAt">Created <span class="sort-indicator"></span></th>
                 <th>Actions</th>
               </tr>
             </thead>
-            <tbody>
-              ${this.currentData.cases.map(caseItem => `
-                <tr data-id="${caseItem.id}">
-                  <td><input type="checkbox" value="${caseItem.id}"></td>
-                  <td>${caseItem.caseNo}</td>
-                  <td>${caseItem.name}</td>
-                  <td>${caseItem.phone}</td>
-                  <td>${caseItem.category}</td>
-                  <td><span class="status-badge ${caseItem.status.toLowerCase().replace(' ', '-')}">${caseItem.status}</span></td>
-                  <td><span class="priority-badge ${caseItem.priority.toLowerCase()}">${caseItem.priority}</span></td>
-                  <td>${this.formatDate(caseItem.createdAt)}</td>
-                  <td>
-                    <button class="btn btn-sm btn-secondary" onclick="app.viewCase('${caseItem.id}')">View</button>
-                    <button class="btn btn-sm btn-secondary" onclick="app.editCase('${caseItem.id}')">Edit</button>
-                    <button class="btn btn-sm btn-danger" onclick="app.deleteCase('${caseItem.id}')">Delete</button>
-                  </td>
-                </tr>
-              `).join('')}
+            <tbody id="cases-tbody">
+              ${this.renderCasesTable()}
             </tbody>
           </table>
         </div>
 
-        <div style="margin-top: var(--space-lg); display: flex; justify-content: between; align-items: center;">
+        <div style="margin-top: var(--space-lg); display: flex; justify-content: space-between; align-items: center;">
           <div>
             <button class="btn btn-secondary" id="bulk-close-btn" disabled>Close Selected</button>
           </div>
           <div style="display: flex; gap: var(--space-md); align-items: center;">
-            <span style="color: var(--text-muted); font-size: var(--font-size-sm);">Showing ${this.currentData.cases.length} cases</span>
-            <select class="form-select" style="width: auto;">
+            <span style="color: var(--text-muted); font-size: var(--font-size-sm);" id="cases-count">Showing ${this.filteredCases.length} of ${this.currentData.cases.length} cases</span>
+            <select class="form-select" id="page-size" style="width: auto;">
               <option value="10">10 per page</option>
               <option value="25">25 per page</option>
               <option value="50">50 per page</option>
             </select>
+            <div id="pagination-controls"></div>
           </div>
         </div>
       </div>
@@ -427,14 +420,40 @@ class HelloForestApp {
       this.openCreateCaseDrawer();
     });
 
+    // Filter event listeners
+    document.querySelectorAll('.case-filter').forEach(filter => {
+      filter.addEventListener('input', () => this.filterCases());
+    });
+
+    document.getElementById('reset-filters')?.addEventListener('click', () => {
+      document.querySelectorAll('.case-filter').forEach(filter => {
+        filter.value = '';
+      });
+      this.filterCases();
+    });
+
+    // Sorting event listeners
+    document.querySelectorAll('.sortable').forEach(header => {
+      header.addEventListener('click', () => {
+        const field = header.dataset.sort;
+        this.sortCases(field);
+      });
+      header.style.cursor = 'pointer';
+    });
+
     // Bulk selection
     document.getElementById('select-all')?.addEventListener('change', (e) => {
-      const checkboxes = document.querySelectorAll('tbody input[type="checkbox"]');
+      const checkboxes = document.querySelectorAll('#cases-tbody input[type="checkbox"]');
       checkboxes.forEach(cb => cb.checked = e.target.checked);
       this.updateBulkActions();
     });
 
-    document.querySelectorAll('tbody input[type="checkbox"]').forEach(cb => {
+    // Individual checkbox listeners will be set up when table is rendered
+    this.setupCheckboxListeners();
+  }
+
+  setupCheckboxListeners() {
+    document.querySelectorAll('#cases-tbody input[type="checkbox"]').forEach(cb => {
       cb.addEventListener('change', () => this.updateBulkActions());
     });
   }
@@ -543,25 +562,77 @@ class HelloForestApp {
   }
 
   openModal(title, content, footer = '') {
+    // Store the currently focused element
+    this.lastFocusedElement = document.activeElement;
+    
+    const modal = document.getElementById('modal-overlay');
+    const modalContent = document.querySelector('.modal-content');
+    
     document.getElementById('modal-title').textContent = title;
     document.getElementById('modal-body').innerHTML = content;
     document.getElementById('modal-footer').innerHTML = footer;
-    document.getElementById('modal-overlay').classList.remove('hidden');
+    
+    modal.classList.remove('hidden');
+    modal.setAttribute('aria-hidden', 'false');
+    
+    // Focus the first focusable element in the modal
+    setTimeout(() => {
+      const focusableElements = modalContent.querySelectorAll(this.focusableSelectors);
+      if (focusableElements.length > 0) {
+        focusableElements[0].focus();
+      }
+    }, 100);
+    
+    // Set up focus trap
+    this.setupFocusTrap(modalContent);
   }
 
   closeModal() {
-    document.getElementById('modal-overlay').classList.add('hidden');
+    const modal = document.getElementById('modal-overlay');
+    modal.classList.add('hidden');
+    modal.setAttribute('aria-hidden', 'true');
+    
+    // Restore focus to the previously focused element
+    if (this.lastFocusedElement) {
+      this.lastFocusedElement.focus();
+      this.lastFocusedElement = null;
+    }
   }
 
   openDrawer(title, content, footer = '') {
+    // Store the currently focused element
+    this.lastFocusedElement = document.activeElement;
+    
+    const drawer = document.getElementById('drawer-overlay');
+    const drawerContent = document.querySelector('.drawer-content');
+    
     document.getElementById('drawer-title').textContent = title;
     document.getElementById('drawer-body').innerHTML = content;
     document.getElementById('drawer-footer').innerHTML = footer;
-    document.getElementById('drawer-overlay').classList.remove('hidden');
+    
+    drawer.classList.remove('hidden');
+    
+    // Focus the first focusable element in the drawer
+    setTimeout(() => {
+      const focusableElements = drawerContent.querySelectorAll(this.focusableSelectors);
+      if (focusableElements.length > 0) {
+        focusableElements[0].focus();
+      }
+    }, 100);
+    
+    // Set up focus trap
+    this.setupFocusTrap(drawerContent);
   }
 
   closeDrawer() {
-    document.getElementById('drawer-overlay').classList.add('hidden');
+    const drawer = document.getElementById('drawer-overlay');
+    drawer.classList.add('hidden');
+    
+    // Restore focus to the previously focused element
+    if (this.lastFocusedElement) {
+      this.lastFocusedElement.focus();
+      this.lastFocusedElement = null;
+    }
   }
 
   // Action methods (placeholders that show toasts)
@@ -839,10 +910,19 @@ class HelloForestApp {
   }
 
   updateBulkActions() {
-    const selected = document.querySelectorAll('tbody input[type="checkbox"]:checked').length;
+    const selected = document.querySelectorAll('#cases-tbody input[type="checkbox"]:checked').length;
     const bulkBtn = document.getElementById('bulk-close-btn');
     if (bulkBtn) {
       bulkBtn.disabled = selected === 0;
+      bulkBtn.textContent = selected > 0 ? `Close Selected (${selected})` : 'Close Selected';
+    }
+
+    // Update select-all checkbox state
+    const selectAll = document.getElementById('select-all');
+    const totalCheckboxes = document.querySelectorAll('#cases-tbody input[type="checkbox"]').length;
+    if (selectAll) {
+      selectAll.indeterminate = selected > 0 && selected < totalCheckboxes;
+      selectAll.checked = selected === totalCheckboxes && totalCheckboxes > 0;
     }
   }
 
@@ -879,6 +959,124 @@ class HelloForestApp {
     document.getElementById('preview-table').innerHTML = tableHTML;
     document.getElementById('preview-container').classList.remove('hidden');
     this.showToast(`Preview showing ${Math.min(rows.length, 50)} of ${lines.length - 1} rows`, 'info');
+  }
+
+  // Focus trap functionality
+  setupFocusTrap(container) {
+    const focusableElements = container.querySelectorAll(this.focusableSelectors);
+    const firstElement = focusableElements[0];
+    const lastElement = focusableElements[focusableElements.length - 1];
+
+    container.addEventListener('keydown', (e) => {
+      if (e.key === 'Tab') {
+        if (e.shiftKey) {
+          if (document.activeElement === firstElement) {
+            e.preventDefault();
+            lastElement.focus();
+          }
+        } else {
+          if (document.activeElement === lastElement) {
+            e.preventDefault();
+            firstElement.focus();
+          }
+        }
+      }
+    });
+  }
+
+  // Table filtering and sorting
+  renderCasesTable() {
+    return this.filteredCases.map(caseItem => `
+      <tr data-id="${caseItem.id}">
+        <td><input type="checkbox" value="${caseItem.id}" aria-label="Select case ${caseItem.caseNo}"></td>
+        <td>${caseItem.caseNo}</td>
+        <td>${caseItem.name}</td>
+        <td>${caseItem.phone}</td>
+        <td>${caseItem.category}</td>
+        <td><span class="status-badge ${caseItem.status.toLowerCase().replace(' ', '-')}">${caseItem.status}</span></td>
+        <td><span class="priority-badge ${caseItem.priority.toLowerCase()}">${caseItem.priority}</span></td>
+        <td>${this.formatDate(caseItem.createdAt)}</td>
+        <td>
+          <button class="btn btn-sm btn-secondary" onclick="app.viewCase('${caseItem.id}')" aria-label="View case ${caseItem.caseNo}">View</button>
+          <button class="btn btn-sm btn-secondary" onclick="app.editCase('${caseItem.id}')" aria-label="Edit case ${caseItem.caseNo}">Edit</button>
+          <button class="btn btn-sm btn-danger" onclick="app.deleteCase('${caseItem.id}')" aria-label="Delete case ${caseItem.caseNo}">Delete</button>
+        </td>
+      </tr>
+    `).join('');
+  }
+
+  filterCases() {
+    const filters = {};
+    document.querySelectorAll('.case-filter').forEach(filter => {
+      const field = filter.dataset.field;
+      const value = filter.value.toLowerCase();
+      if (value) filters[field] = value;
+    });
+
+    this.filteredCases = this.currentData.cases.filter(caseItem => {
+      return Object.entries(filters).every(([field, value]) => {
+        return caseItem[field].toLowerCase().includes(value);
+      });
+    });
+
+    this.applySorting();
+    this.updateCasesTable();
+  }
+
+  sortCases(field) {
+    if (this.currentSort.field === field) {
+      this.currentSort.direction = this.currentSort.direction === 'asc' ? 'desc' : 'asc';
+    } else {
+      this.currentSort.field = field;
+      this.currentSort.direction = 'asc';
+    }
+    
+    this.applySorting();
+    this.updateSortIndicators();
+    this.updateCasesTable();
+  }
+
+  applySorting() {
+    if (!this.currentSort.field) return;
+
+    this.filteredCases.sort((a, b) => {
+      let aVal = a[this.currentSort.field];
+      let bVal = b[this.currentSort.field];
+
+      if (this.currentSort.field === 'createdAt') {
+        aVal = new Date(aVal);
+        bVal = new Date(bVal);
+      } else {
+        aVal = aVal.toString().toLowerCase();
+        bVal = bVal.toString().toLowerCase();
+      }
+
+      if (aVal < bVal) return this.currentSort.direction === 'asc' ? -1 : 1;
+      if (aVal > bVal) return this.currentSort.direction === 'asc' ? 1 : -1;
+      return 0;
+    });
+  }
+
+  updateSortIndicators() {
+    document.querySelectorAll('.sort-indicator').forEach(indicator => {
+      indicator.textContent = '';
+    });
+
+    if (this.currentSort.field) {
+      const header = document.querySelector(`[data-sort="${this.currentSort.field}"] .sort-indicator`);
+      if (header) {
+        header.textContent = this.currentSort.direction === 'asc' ? ' ↑' : ' ↓';
+      }
+    }
+  }
+
+  updateCasesTable() {
+    const tbody = document.getElementById('cases-tbody');
+    if (tbody) {
+      tbody.innerHTML = this.renderCasesTable();
+      this.updateBulkActions();
+      document.getElementById('cases-count').textContent = `Showing ${this.filteredCases.length} of ${this.currentData.cases.length} cases`;
+    }
   }
 }
 

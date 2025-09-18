@@ -429,6 +429,36 @@ body {
   background: rgba(255, 255, 255, 0.05);
 }
 
+.table th.sortable {
+  cursor: pointer;
+  user-select: none;
+  transition: background-color var(--trans);
+}
+
+.table th.sortable:hover {
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.sort-indicator {
+  font-size: var(--font-size-sm);
+  margin-left: var(--space-xs);
+  color: var(--moss-400);
+}
+
+/* Focus visible for better accessibility */
+*:focus-visible {
+  outline: 2px solid var(--ring);
+  outline-offset: 2px;
+  border-radius: var(--radius-sm);
+}
+
+/* Upload area dragover state */
+.upload-area.dragover {
+  border-color: var(--moss-500);
+  background: rgba(62, 143, 106, 0.1);
+  transform: scale(1.02);
+}
+
 /* Card styles */
 .card {
   background: var(--glass-bg);
